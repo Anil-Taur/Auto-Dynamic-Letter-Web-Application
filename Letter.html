@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Add Subject</title>
+    <title>Add Letter Content</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -32,93 +32,20 @@
     <link href="assets/css/style.css" rel="stylesheet">
 
     <script>
-        window.onload = myonload();
-        function myonload() {
-
-            $.ajax({
-                method: 'GET',
-                url: 'http://localhost:80/Webservice/get_letter_title.php',
-
-
-
-            }).then(function (data) {
-                console.log(data);
-
-                let datscheck = jQuery.parseJSON(data);
-                console.log(datscheck);
-
-                var htmldemo = "";
-                for (let i = 0; i < datscheck.length; i++) {
-                    let title_id = datscheck[i].title_id;
-                    let lettertitle = datscheck[i].title_name;
-
-                    htmldemo += "<option value='" + title_id + "'>" + lettertitle + "</option>";
-                }
-
-
-                document.getElementById('titleid').innerHTML = htmldemo;
-
-
-
-
-
-            })
-
-            $.ajax({
-                method: 'GET',
-                url: 'http://localhost:80/Webservice/get_subtitlelist.php'
-
-
-
-            }).then(function (data) {
-                console.log(data);
-
-                let dlist = jQuery.parseJSON(data);
-                console.log(dlist);
-
-                var htmldemo2 = "";
-                let counter = 1;
-                for (let i = 0; i < dlist.length; i++) {
-
-                    let maintitle = dlist[i].title_name;
-                    let subtitle = dlist[i].subtitle;
-
-                    htmldemo2 += " <tr><th scope='row'>" + counter + "</th> <td>" + maintitle + "</td><td>" + subtitle + " </tr>";
-                    counter++;
-                }
-
-
-                document.getElementById('mylb').innerHTML = htmldemo2;
-
-
-
-
-
-            })
-
-        }
-
-
-
-
-
         function submititle() {
 
-            let subtitlename = document.getElementById('titleid').value;
-            let titleid = document.getElementById('subtitlename').value;
+            let LetterContent = document.getElementById('LetterContent').value;
+            let subID = document.getElementById('subid').value;
 
-
-            console.log(titleid);
-            console.log(subtitlename);
-
+            console.log(LetterContent);
+            console.log(subID);
 
             $.ajax({
                 method: 'POST',
-                url: 'http://localhost:80/Webservice/subtitle.php',
+                url: 'http://localhost:80/Webservice/post_letter_template.php',
                 data: {
-                    title_id: titleid,
-                    sub_title: subtitlename
-
+                    template_text: LetterContent,
+                    sub_title_id: subID
                 }
 
 
@@ -394,15 +321,15 @@
                         </a>
                     </li>
                     <li>
-                        <a href="subtitle.html" class="active">
+                        <a href="subtitle.html">
                             <i class="bi bi-circle"></i><span>ADD SUB TITLE OF LETTER </span>
                         </a>
                     </li>
-                    <!-- <li>
-                        <a href="Letter.html">
+                    <li>
+                        <a href="Letter.html" class="active">
                             <i class="bi bi-circle"></i><span>ADD LETTER CONTENT</span>
                         </a>
-                    </li> -->
+                    </li>
                 </ul>
             </li><!-- End Forms Nav -->
 
@@ -419,7 +346,7 @@
     <main id="main" class="main">
 
         <div class="pagetitle">
-            <h1>ADD SUB TITLE</h1>
+            <h1>ADD LETTER CONTENT</h1>
 
         </div><!-- End Page Title -->
         <section class="section">
@@ -428,24 +355,24 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">SUB TITLE FORM</h5>
+                            <h5 class="card-title">LETTER CONTENT FORM</h5>
 
                             <!-- Horizontal Form -->
                             <form>
                                 <div class="row mb-3">
-                                    <label for="inputEmail3" class="col-sm-3 col-form-label">Titel List</label>
+                                    <label for="inputEmail3" class="col-sm-3 col-form-label">Letter Content</label>
                                     <div class="col-sm-9">
-                                        <select type="text" class="form-control" id="titleid">
-
-
-                                        </select>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="LetterContent"
+                                                placeholder="Enter The Letter Content">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="inputEmail3" class="col-sm-3 col-form-label">Letter Sub Title</label>
+                                    <label for="inputEmail3" class="col-sm-3 col-form-label">Subject ID </label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="subtitlename"
-                                            placeholder="Enter Subtitle">
+                                        <input type="text" class="form-control" id="subid"
+                                            placeholder="Enter The Subject ID">
                                     </div>
                                 </div>
 

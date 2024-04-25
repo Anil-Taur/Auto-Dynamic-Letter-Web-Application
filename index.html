@@ -2,164 +2,504 @@
 <html lang="en">
 
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <title>Auto Letter - Home</title>
-    <link href="logo2.png" rel="icon">
-    <style>
-        .row {
-            margin-top: 10px;
+  <title>Auto Letter</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <!-- Favicons -->
+  <link href="logo2.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+
+
+
+
+  <script>
+
+    function submititle() {
+
+      let titlename = document.getElementById('titlename').value;
+      let iconname = document.getElementById('iconname').value;
+
+      console.log(titlename);
+      console.log(iconname);
+
+      $.ajax({
+        method: 'POST',
+        url: 'http://localhost:80/Webservice/insert.php',
+        data: {
+          title_name: titlename,
+          icon_name: iconname
         }
 
-        .col-md-3 {
-            text-align: center;
-            padding: 20px;
 
+
+      }).then(function (data) {
+        console.log(data);
+        let datscheck = jQuery.parseJSON(data);
+
+        if (datscheck[0].STATUS == "Success") {
+          alert("Title Add Successfully");
+        } else {
+          alert("Error In Add");
         }
 
-        .footer {
-            padding: 20px 0;
-            font-size: 14px;
-            transition: all 0.3s;
-            border-top: 1px solid #cddfff;
-            margin-top: 7%;
 
+
+
+
+
+      })
+
+    }
+
+
+
+
+    window.onload = myonload();
+    function myonload() {
+
+
+      console.log('chekc');
+
+      $.ajax({
+        method: 'GET',
+        url: 'http://localhost:80/Webservice/get_letter_title.php',
+
+
+
+      }).then(function (data) {
+        console.log(data);
+
+        let datscheck = jQuery.parseJSON(data);
+        console.log(datscheck);
+
+        var htmldemo = "";
+        let counter = 1;
+        for (let i = 0; i < datscheck.length; i++) {
+
+
+          let lettertitle = datscheck[i].title_name;
+          let icon_name = datscheck[i].icon_name;
+
+
+          htmldemo += " <tr><th scope='row'>" + counter + "</th> <td>" + lettertitle + "</td> </tr>";
+          counter++;
         }
 
-        .footer .copyright {
-            text-align: center;
-            color: #012970;
-        }
 
-        .footer .credits {
-            padding-top: 5px;
-            text-align: center;
-            font-size: 13px;
-            color: #012970;
-        }
-    </style>
-    <script>
-
-
-        window.onload = myonload();
-        function myonload() {
-
-
-            console.log('chekc');
-
-            $.ajax({
-                method: 'GET',
-                url: 'http://localhost:80/Webservice/get_letter_title.php',
+        document.getElementById('mylb').innerHTML = htmldemo;
 
 
 
-            }).then(function (data) {
-                console.log(data);
-
-                let datscheck = jQuery.parseJSON(data);
-                console.log(datscheck);
-
-                var htmldemo = "";
-                for (let i = 0; i < datscheck.length; i++) {
-                    let title_id = datscheck[i].title_id;
-                    let lettertitle = datscheck[i].title_name;
-
-                    let icon_name = datscheck[i].icon_name;
-
-                    htmldemo += "<div class='col-md-3'><i class='bi-" + icon_name + "' style='font-size:30px;'></i><h2><b>" + lettertitle + "</b></h2><p>All Types of " + lettertitle + "</p><button type='button' class='btn btn-success' onclick='opensub(\"" + title_id + "\",\"" + lettertitle + "\")'> Click Here </button></div>";
-                }
-
-
-                document.getElementById('mylb').innerHTML = htmldemo;
-
-
-
-            })
+      })
 
 
 
 
 
 
-        }
+    }
 
-        function opensub(titleid, lettertile) {
+  </script>
+  <style>
 
-            localStorage.setItem('mainletterid', titleid);
-            localStorage.setItem('mainlettertitle', lettertile);
-
-            window.location.href = 'subtitle.html';
-
-
-        }
-    </script>
+  </style>
 </head>
 
 <body>
 
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="index.html">
-            <img src="logo1.png" width="100px" height="30px">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center">
+        <img src="logo1.png" alt="">
+        <span class="d-none d-lg-block"></span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <div class="search-bar">
+      <form class="search-form d-flex align-items-center" method="POST" action="#">
+        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
+        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+      </form>
+    </div><!-- End Search Bar -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
+            <i class="bi bi-search"></i>
+          </a>
+        </li><!-- End Search Icon-->
+
+        <li class="nav-item dropdown">
+
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-bell"></i>
+            <span class="badge bg-primary badge-number">4</span>
+          </a><!-- End Notification Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+            <li class="dropdown-header">
+              You have 4 new notifications
+              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-exclamation-circle text-warning"></i>
+              <div>
+                <h4>Lorem Ipsum</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>30 min. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-x-circle text-danger"></i>
+              <div>
+                <h4>Atque rerum nesciunt</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>1 hr. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-check-circle text-success"></i>
+              <div>
+                <h4>Sit rerum fuga</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>2 hrs. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-info-circle text-primary"></i>
+              <div>
+                <h4>Dicta reprehenderit</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>4 hrs. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li class="dropdown-footer">
+              <a href="#">Show all notifications</a>
+            </li>
+
+          </ul><!-- End Notification Dropdown Items -->
+
+        </li><!-- End Notification Nav -->
+
+        <li class="nav-item dropdown">
+
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-chat-left-text"></i>
+            <span class="badge bg-success badge-number">3</span>
+          </a><!-- End Messages Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
+            <li class="dropdown-header">
+              You have 3 new messages
+              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="message-item">
+              <a href="#">
+                <img src="assets/img/messages-1.jpg" alt="" class="rounded-circle">
+                <div>
+                  <h4>Maria Hudson</h4>
+                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                  <p>4 hrs. ago</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="message-item">
+              <a href="#">
+                <img src="assets/img/messages-2.jpg" alt="" class="rounded-circle">
+                <div>
+                  <h4>Anna Nelson</h4>
+                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                  <p>6 hrs. ago</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="message-item">
+              <a href="#">
+                <img src="assets/img/messages-3.jpg" alt="" class="rounded-circle">
+                <div>
+                  <h4>David Muldon</h4>
+                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                  <p>8 hrs. ago</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="dropdown-footer">
+              <a href="#">Show all messages</a>
+            </li>
+
+          </ul><!-- End Messages Dropdown Items -->
+
+        </li><!-- End Messages Nav -->
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="profile.jpg" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">A. Taur</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>Anil Taur</h6>
+              <span>Web Designer</span>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                <i class="bi bi-gear"></i>
+                <span>Account Settings</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+                <i class="bi bi-question-circle"></i>
+                <span>Need Help?</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="#">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+
+
+
+      <li class="nav-item">
+        <a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-journal-text"></i><span> Titles</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="index.html" class="active">
+              <i class="bi bi-circle"></i><span>ADD TITLE OF LETTER </span>
+            </a>
+          </li>
+          <li>
+            <a href="subtitle.html">
+              <i class="bi bi-circle"></i><span>ADD SUB TITLE OF LETTER</span>
+            </a>
+          </li>
+          <!-- <li>
+            <a href="Letter.html">
+              <i class="bi bi-circle"></i><span>ADD LETTER CONTENT</span>
+            </a>
+          </li> -->
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="about.html">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="contact.html">Contact Us</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="loginindex.html"  >Logout <i class="bi bi-box-arrow-right" style="color: crimson;"></i></a>
-                </li>
-            </ul>
-            <!-- <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form> -->
-        </div>
-    </nav>
-
-    <div class="container-fluid">
-
-        <div class="row" id="mylb">
+        </ul>
+      </li><!-- End Forms Nav -->
 
 
 
+    </ul>
 
+  </aside><!-- End Sidebar-->
 
-        </div>
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>ADD LETTER TITLE </h1>
+
     </div>
-    <footer id="footer" class="footer">
-        <div class="copyright">
-            &copy; Copyright <strong><span>Auto Letter</span></strong>. All Rights Reserved
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-6">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">LETTER TITLE FORM</h5>
+
+
+              <form>
+                <div class="row mb-3">
+                  <label for="inputEmail3" class="col-sm-3 col-form-label">Title Name</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" id="titlename" placeholder="Enter Title">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="inputEmail3" class="col-sm-3 col-form-label">Icon Name</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" id="iconname" placeholder="Enter Icon Name">
+                  </div>
+                </div>
+
+                <div class="text-center">
+                  <button type="button" class="btn btn-primary" onclick="submititle()">Submit</button>
+                  <button type="reset" class="btn btn-secondary">Reset</button>
+                </div>
+              </form><!-- End Horizontal Form -->
+
+            </div>
+          </div>
+
+
+
         </div>
-        <div class="credits">
-            Designed by <a href="#">Admin</a><br>
-            <a href="#" class="twitter"><i class="bi bi-twitter" style="font-size: 20px;"></i></a>&nbsp;
-            <a href="#" class="facebook"><i class="bi bi-facebook" style="font-size: 20px;"></i></a>&nbsp;
-            <a href="#" class="instagram"><i class="bi bi-instagram" style="font-size: 20px;"></i></a>&nbsp;
-            <a href="#" class="linkedin"><i class="bi bi-linkedin" style="font-size: 20px;"></i></a>
+
+        <div class="col-lg-6">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">LETTER TITLES</h5>
+
+
+
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Sr.No.</th>
+                    <th scope="col"> Letter Title</th>
+                  </tr>
+                </thead>
+                <tbody id="mylb">
+
+
+
+
+                </tbody>
+              </table>
+
+
+
+
+
+
+            </div>
+          </div>
         </div>
-    </footer>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>Auto Latter</span></strong>. All Rights Reserved
+    </div>
+    <div class="credits">
+      Designed by <a href="https://in.linkedin.com/in/anil-taur-64582b27a"></a>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="assets/vendor/echarts/echarts.min.js"></script>
+  <script src="assets/vendor/quill/quill.min.js"></script>
+  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
 
 </body>
 
