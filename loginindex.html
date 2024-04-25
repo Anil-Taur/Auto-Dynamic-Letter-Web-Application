@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="logo2.png" rel="icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 100%;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333333;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555555;
+            font-weight: bold;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn:focus {
+            outline: none;
+        }
+
+        .btn i {
+            margin-right: 5px;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+            display: block;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            text-align: center;
+            color: red;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   
+    <script>
+        // Function to handle form submission
+        function handleLogin(event) {
+            event.preventDefault();
+
+            let usernameInput = document.getElementById('username').value.toLowerCase();
+            let passwordInput = document.getElementById('password').value;
+
+            $.ajax({
+                method: 'GET',
+                url: 'http://localhost:80/Webservice/login.php',
+                dataType: 'json', // Expect JSON response
+                success: function (data) {
+                    let isLoggedIn = false;
+                    for (let i = 0; i < data.length; i++) {
+                        let user = data[i].username.toLowerCase();
+                        let email = data[i].email.toLowerCase(); // Also convert email to lowercase
+                        let pass = data[i].password;
+
+                        // Corrected condition to check both username and email
+                        if ((user === usernameInput || email === usernameInput) && pass === passwordInput) {
+                            isLoggedIn = true;
+                            break;
+                        }
+                    }
+
+                    if (isLoggedIn) {
+                        window.location.href = "index.html";
+                    } else {
+                        // Show error message to the user
+                        let errorMessage = document.getElementById('error-message');
+                        if (errorMessage) {
+                            errorMessage.innerText = "This account does not exist. Please check Username or password.";
+                            errorMessage.style.display = "block";
+                        }
+                    }
+                },
+                error: function () {
+                    console.error('Error fetching login data.');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', handleLogin);
+            } else {
+                console.error('Form element not found');
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+
+        <h2></h2>
+
+        <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+        <!-- Error message display -->
+        <div id="error-message" class="error-message"></div>
+        <!-- End error message display -->
+        <form>
+            <div class="input-group">
+                <label for="username">Username or Email</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn"><i class="fas fa-sign-in-alt"></i> Login</button>
+            <!-- <a href="#" class="forgot-password">Forgot Password?</a> -->
+            <div class="col-12">
+                <p class="small mb-0">Don't have an account? <a href="registerindex.html">Create an account</a></p>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

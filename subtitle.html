@@ -1,0 +1,2529 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.56/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.56/vfs_fonts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+
+    <link href="logo2.png" rel="icon">
+    <title>Auto Letter - Subject</title>
+    <style>
+        .col-md-3 {
+            text-align: left;
+            padding: 10px;
+
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        tr:hover {
+            background-color: rgba(245, 222, 179, 0.663);
+        }
+
+        tr {
+            text-align: left;
+        }
+
+        form {
+
+            margin: 0 auto;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .footer {
+            padding: 20px 0;
+            font-size: 14px;
+            transition: all 0.3s;
+            border-top: 1px solid #cddfff;
+            margin-top: 13%;
+
+        }
+
+        .footer .copyright {
+            text-align: center;
+            color: #012970;
+        }
+
+        .footer .credits {
+            padding-top: 5px;
+            text-align: center;
+            font-size: 13px;
+            color: #012970;
+        }
+
+        /* Responsive CSS */
+        @media screen and (max-width: 600px) {
+            form {
+                width: 90%;
+            }
+        }
+    </style>
+    <script>
+
+
+
+        let subtitlemain = "";
+
+        let noofvar = "";
+        let subtitleid = "";
+        var mainprintms;
+        window.onload = myonload();
+
+
+        function opensub(subtitl, SRNOid, modal_name, no_of_var) {
+
+
+
+            subtitlemain = subtitl;
+            subtitleid = SRNOid;
+            // var modalid = modal_name;
+            noofvar = no_of_var;
+
+
+
+
+
+            $.ajax({
+                method: 'POST',
+                url: 'http://localhost:80/Webservice/get_letter_template.php',
+                data: {
+
+                    sub_title_id: subtitleid,
+
+                }
+
+
+
+            }).then(function (data) {
+                console.log(data);
+                let mainress = jQuery.parseJSON(data);
+
+
+                mainprintms = mainress[0].template_text;
+
+
+                console.log(mainprintms);
+
+            
+
+
+            })
+
+
+        }
+
+
+        function myonload() {
+
+
+            var datevv = new Date();
+
+
+            console.log(datevv);
+            let dd = datevv.getDate();
+            let monthh = datevv.getMonth() + 1;
+            let yearsd = datevv.getFullYear();
+
+
+
+            let maintitleid = localStorage.getItem('mainletterid');
+
+
+            $.ajax({
+                method: 'POST',
+                url: 'http://localhost:80/Webservice/get_sub_title.php',
+                data: {
+                    maintitleid: maintitleid
+                }
+            }).then(function (data) {
+                console.log("Ajax response:", data);
+
+                let datscheck = jQuery.parseJSON(data);
+                console.log("Parsed data:", datscheck);
+
+                var htmldemo = "";
+                for (let i = 0; i < datscheck.length; i++) {
+                    let srno = 1 + i;
+                    let letter_subtitle = datscheck[i].subtitle;
+                    let no_of_var = datscheck[i].no_of_var;
+                    let modal_name = datscheck[i].modal_name;
+                    let SRNOid = datscheck[i].SRNO;
+                    htmldemo += "<tr><td>" + srno + "</td><th>" + letter_subtitle + "</th><td><button type='button' id='button' class=' btn btn-success' data-toggle='modal' data-target='#" + modal_name + "' onclick='opensub(\"" + letter_subtitle + "\",\"" + SRNOid + "\",\"" + modal_name + "\",\"" + no_of_var + "\")'>Click Here</button></td></tr>";
+                }
+                document.getElementById('mylb').innerHTML = htmldemo;
+                let lettertitle = localStorage.getItem('mainlettertitle');
+
+                let hmldd = "<span>" + lettertitle + "</span>";
+
+                document.getElementById('newdtitd').innerHTML = hmldd;
+
+
+
+
+
+            })
+
+
+        }
+
+
+
+    </script>
+
+    <script type="text/javascript">
+        function downloadPdf() {
+
+
+            let noofvarr = parseInt(noofvar);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            if (noofvarr == 1) {
+
+                let var1 = document.getElementById('var1').value;
+
+            } else if (noofvarr == 2) {
+                var var1 = document.getElementById('var45').value;
+                var var2 = document.getElementById('var46').value;
+
+            } else if (noofvarr == 3) {
+                var var1 = document.getElementById('var1').value;
+                var var2 = document.getElementById('var2').value;
+                var var3 = document.getElementById('var3').value;
+
+            } else if (noofvarr == 4) {
+                var var1 = document.getElementById('var1').value;
+                var var2 = document.getElementById('var2').value;
+                var var3 = document.getElementById('var3').value;
+                var var4 = document.getElementById('var4').value;
+                var var54 = document.getElementById('var54').value;
+                var var55 = document.getElementById('var55').value;
+                var var56 = document.getElementById('var56').value;
+                var var57 = document.getElementById('var57').value;
+             
+
+
+            } else if (noofvarr == 5) {
+                var var1 = document.getElementById('var19').value;
+                var var2 = document.getElementById('var20').value;
+                var var3 = document.getElementById('var21').value;
+                var var4 = document.getElementById('var22').value;
+                var var5 = document.getElementById('var23').value;
+
+            } else if (noofvarr == 6) {
+                var var5 = document.getElementById('var5').value;
+                var var6 = document.getElementById('var6').value;
+                var var7 = document.getElementById('var7').value;
+                var var8 = document.getElementById('var8').value;
+                var var9 = document.getElementById('var9').value;
+                var var10 = document.getElementById('var10').value;
+                var var1 = document.getElementById('var39').value;
+                var var2 = document.getElementById('var40').value;
+                var var3 = document.getElementById('var41').value;
+                var var4 = document.getElementById('var42').value;
+                var var5 = document.getElementById('var43').value;
+                var var6 = document.getElementById('var44').value;
+
+            } else if (noofvarr == 7) {
+                var var1 = document.getElementById('var47').value;
+                var var2 = document.getElementById('var48').value;
+                var var3 = document.getElementById('var49').value;
+                var var4 = document.getElementById('var50').value;
+                var var5 = document.getElementById('var51').value;
+                var var6 = document.getElementById('var52').value;
+                var var7 = document.getElementById('var53').value;
+
+            } else if (noofvarr == 8) {
+                var var11 = document.getElementById('var11').value;
+                var var12 = document.getElementById('var12').value;
+                var var13 = document.getElementById('var13').value;
+                var var14 = document.getElementById('var14').value;
+                var var15 = document.getElementById('var15').value;
+                var var16 = document.getElementById('var16').value;
+                var var17 = document.getElementById('var17').value;
+                var var18 = document.getElementById('var18').value;
+                var var1 = document.getElementById('var107').value;
+                var var2 = document.getElementById('var108').value;
+                var var3 = document.getElementById('var109').value;
+                var var4 = document.getElementById('var110').value;
+                var var5 = document.getElementById('var111').value;
+                var var6 = document.getElementById('var112').value;
+                var var7 = document.getElementById('var113').value;
+                var var8 = document.getElementById('var114').value;
+
+            } else if (noofvarr == 9) {
+                var var1 = document.getElementById('var58').value;
+                var var2 = document.getElementById('var59').value;
+                var var3 = document.getElementById('var60').value;
+                var var4 = document.getElementById('var61').value;
+                var var5 = document.getElementById('var62').value;
+                var var6 = document.getElementById('var63').value;
+                var var7 = document.getElementById('var64').value;
+                var var8 = document.getElementById('var65').value;
+                var var9 = document.getElementById('var66').value;
+
+            } else if (noofvarr == 10) {
+                var var1 = document.getElementById('var67').value;
+                var var2 = document.getElementById('var68').value;
+                var var3 = document.getElementById('var69').value;
+                var var4 = document.getElementById('var70').value;
+                var var5 = document.getElementById('var71').value;
+                var var6 = document.getElementById('var72').value;
+                var var7 = document.getElementById('var73').value;
+                var var8 = document.getElementById('var74').value;
+                var var9 = document.getElementById('var75').value;
+                var var10 = document.getElementById('var76').value;
+
+                var var77 = document.getElementById('var77').value;
+                var var78 = document.getElementById('var78').value;
+                var var79 = document.getElementById('var79').value;
+                var var80 = document.getElementById('var80').value;
+                var var81 = document.getElementById('var81').value;
+                var var82 = document.getElementById('var82').value;
+                var var83 = document.getElementById('var83').value;
+                var var84 = document.getElementById('var84').value;
+                var var85 = document.getElementById('var85').value;
+                var var86 = document.getElementById('var86').value;
+
+                var var87 = document.getElementById('var87').value;
+                var var88 = document.getElementById('var88').value;
+                var var89 = document.getElementById('var89').value;
+                var var90 = document.getElementById('var90').value;
+                var var91 = document.getElementById('var91').value;
+                var var92 = document.getElementById('var92').value;
+                var var93 = document.getElementById('var93').value;
+                var var94 = document.getElementById('var94').value;
+                var var95 = document.getElementById('var95').value;
+                var var96 = document.getElementById('var96').value;
+
+                var var97 = document.getElementById('var97').value;
+                var var98 = document.getElementById('var98').value;
+                var var99 = document.getElementById('var99').value;
+                var var100 = document.getElementById('var100').value;
+                var var101 = document.getElementById('var101').value;
+                var var102 = document.getElementById('var102').value;
+                var var103 = document.getElementById('var103').value;
+                var var104 = document.getElementById('var104').value;
+                var var105 = document.getElementById('var105').value;
+                var var106 = document.getElementById('var106').value;
+
+            } else if (noofvarr == 11) {
+                var var1 = document.getElementById('var1').value;
+                var var2 = document.getElementById('var2').value;
+                var var3 = document.getElementById('var3').value;
+                var var4 = document.getElementById('var4').value;
+                var var5 = document.getElementById('var5').value;
+                var var6 = document.getElementById('var6').value;
+                var var7 = document.getElementById('var7').value;
+                var var8 = document.getElementById('var8').value;
+                var var9 = document.getElementById('var9').value;
+                var var10 = document.getElementById('var10').value;
+                var var11 = document.getElementById('var11').value;
+
+            } else if (noofvarr == 12) {
+                var var1 = document.getElementById('var1').value;
+                var var2 = document.getElementById('var2').value;
+                var var3 = document.getElementById('var3').value;
+                var var4 = document.getElementById('var4').value;
+                var var5 = document.getElementById('var5').value;
+                var var6 = document.getElementById('var6').value;
+                var var7 = document.getElementById('var7').value;
+                var var8 = document.getElementById('var8').value;
+                var var9 = document.getElementById('var9').value;
+                var var10 = document.getElementById('var10').value;
+                var var11 = document.getElementById('var11').value;
+                var var12 = document.getElementById('var12').value;
+
+            } else if (noofvarr == 13) {
+                var var1 = document.getElementById('var1').value;
+                var var2 = document.getElementById('var2').value;
+                var var3 = document.getElementById('var3').value;
+                var var4 = document.getElementById('var4').value;
+                var var5 = document.getElementById('var5').value;
+                var var6 = document.getElementById('var6').value;
+                var var7 = document.getElementById('var7').value;
+                var var8 = document.getElementById('var8').value;
+                var var9 = document.getElementById('var9').value;
+                var var10 = document.getElementById('var10').value;
+                var var11 = document.getElementById('var11').value;
+                var var12 = document.getElementById('var12').value;
+                var var13 = document.getElementById('var13').value;
+
+            } else if (noofvarr == 14) {
+                var var1 = document.getElementById('var1').value;
+                var var2 = document.getElementById('var2').value;
+                var var3 = document.getElementById('var3').value;
+                var var4 = document.getElementById('var4').value;
+                var var5 = document.getElementById('var5').value;
+                var var6 = document.getElementById('var6').value;
+                var var7 = document.getElementById('var7').value;
+                var var8 = document.getElementById('var8').value;
+                var var9 = document.getElementById('var9').value;
+                var var10 = document.getElementById('var10').value;
+                var var11 = document.getElementById('var11').value;
+                var var12 = document.getElementById('var12').value;
+                var var13 = document.getElementById('var13').value;
+                var var14 = document.getElementById('var14').value;
+
+            } else if (noofvarr == 15) {
+                var var1 = document.getElementById('var24').value;
+                var var2 = document.getElementById('var25').value;
+                var var3 = document.getElementById('var26').value;
+                var var4 = document.getElementById('var27').value;
+                var var5 = document.getElementById('var28').value;
+                var var6 = document.getElementById('var29').value;
+                var var7 = document.getElementById('var30').value;
+                var var8 = document.getElementById('var31').value;
+                var var9 = document.getElementById('var32').value;
+                var var10 = document.getElementById('var33').value;
+                var var11 = document.getElementById('var34').value;
+                var var12 = document.getElementById('var35').value;
+                var var13 = document.getElementById('var36').value;
+                var var14 = document.getElementById('var37').value;
+                var var15 = document.getElementById('var38').value;
+
+            } else if (noofvarr == 16) {
+                var var1 = document.getElementById('var1').value;
+                var var2 = document.getElementById('var2').value;
+                var var3 = document.getElementById('var3').value;
+                var var4 = document.getElementById('var4').value;
+                var var5 = document.getElementById('var5').value;
+                var var6 = document.getElementById('var6').value;
+                var var7 = document.getElementById('var7').value;
+                var var8 = document.getElementById('var8').value;
+                var var9 = document.getElementById('var9').value;
+                var var10 = document.getElementById('var10').value;
+                var var11 = document.getElementById('var11').value;
+                var var12 = document.getElementById('var12').value;
+                var var13 = document.getElementById('var13').value;
+                var var14 = document.getElementById('var14').value;
+                var var15 = document.getElementById('var15').value;
+                var var16 = document.getElementById('var16').value;
+
+            } else if (noofvarr == 17) {
+                var var1 = document.getElementById('var1').value;
+                var var2 = document.getElementById('var2').value;
+                var var3 = document.getElementById('var3').value;
+                var var4 = document.getElementById('var4').value;
+                var var5 = document.getElementById('var5').value;
+                var var6 = document.getElementById('var6').value;
+                var var7 = document.getElementById('var7').value;
+                var var8 = document.getElementById('var8').value;
+                var var9 = document.getElementById('var9').value;
+                var var10 = document.getElementById('var10').value;
+                var var11 = document.getElementById('var11').value;
+                var var12 = document.getElementById('var12').value;
+                var var13 = document.getElementById('var13').value;
+                var var14 = document.getElementById('var14').value;
+                var var15 = document.getElementById('var15').value;
+                var var16 = document.getElementById('var16').value;
+                var var17 = document.getElementById('var17').value;
+
+            } else if (noofvarr == 18) {
+
+                var var1 = document.getElementById('var1').value;
+                var var2 = document.getElementById('var2').value;
+                var var3 = document.getElementById('var3').value;
+                var var4 = document.getElementById('var4').value;
+                var var5 = document.getElementById('var5').value;
+                var var6 = document.getElementById('var6').value;
+                var var7 = document.getElementById('var7').value;
+                var var8 = document.getElementById('var8').value;
+                var var9 = document.getElementById('var9').value;
+                var var10 = document.getElementById('var10').value;
+                var var11 = document.getElementById('var11').value;
+                var var12 = document.getElementById('var12').value;
+                var var13 = document.getElementById('var13').value;
+                var var14 = document.getElementById('var14').value;
+                var var15 = document.getElementById('var15').value;
+                var var16 = document.getElementById('var16').value;
+                var var17 = document.getElementById('var17').value;
+                var var18 = document.getElementById('var18').value;
+
+
+            } else if (noofvarr == 19) {
+
+                var var1 = document.getElementById('var1').value;
+                var var2 = document.getElementById('var2').value;
+                var var3 = document.getElementById('var3').value;
+                var var4 = document.getElementById('var4').value;
+                var var5 = document.getElementById('var5').value;
+                var var6 = document.getElementById('var6').value;
+                var var7 = document.getElementById('var7').value;
+                var var8 = document.getElementById('var8').value;
+                var var9 = document.getElementById('var9').value;
+                var var10 = document.getElementById('var10').value;
+                var var11 = document.getElementById('var11').value;
+                var var12 = document.getElementById('var12').value;
+                var var13 = document.getElementById('var13').value;
+                var var14 = document.getElementById('var14').value;
+                var var15 = document.getElementById('var15').value;
+                var var16 = document.getElementById('var16').value;
+                var var17 = document.getElementById('var17').value;
+                var var18 = document.getElementById('var18').value;
+                var var19 = document.getElementById('var19').value;
+
+            } else if (noofvarr == 20) {
+
+                var var1 = document.getElementById('var1').value;
+                var var2 = document.getElementById('var2').value;
+                var var3 = document.getElementById('var3').value;
+                var var4 = document.getElementById('var4').value;
+                var var5 = document.getElementById('var5').value;
+                var var6 = document.getElementById('var6').value;
+                var var7 = document.getElementById('var7').value;
+                var var8 = document.getElementById('var8').value;
+                var var9 = document.getElementById('var9').value;
+                var var10 = document.getElementById('var10').value;
+                var var11 = document.getElementById('var11').value;
+                var var12 = document.getElementById('var12').value;
+                var var13 = document.getElementById('var13').value;
+                var var14 = document.getElementById('var14').value;
+                var var15 = document.getElementById('var15').value;
+                var var16 = document.getElementById('var16').value;
+                var var17 = document.getElementById('vzar17').value;
+                var var18 = document.getElementById('var18').value;
+                var var19 = document.getElementById('var19').value;
+                var var20 = document.getElementById('var20').value;
+
+
+            }
+
+
+
+
+
+
+
+
+            //!!! const statement = `To,\n Bank Manager\n${bank}\n ${address} \n  Subject : Request${subtitlemain}\n Requested Sir/Madam,\nI am writing to request a bank statement for my savings account with your esteemed bank. My account number is${acco} and the account is in the name of${YName}I would like to request the bank statement for the past, starting from ${datefrom}to${dateto}.\nYours Sincerely\n${YName}`;
+
+            //!!! const chequebook = `To,\n Bank Manager\n${bank}\n ${address} \n  Subject : Request${subtitlemain}\n Requested Sir/Madam,\nThis is to bring to your attention that I am an account holder of your ${bank}for a long time. My account number is ${acco}Your employees are very helpful and I am completely satisfied with your services.\nI am writing this application letter to inform you that my old cheque book has just finished and I would need another one on an urgent basis. It would be very kind of you if you do the needful and issue me a new cheque book as soon as possible.\nThanking You,\nYours Sincerely\n${YName}`;
+
+            //!!! const Fee Concession = `To,\n The Principal\n${College}\n ${address} \n  Subject :Request${subtitlemain}\n Dear Principal Sir/Madam,\n I am ${father}, the father of ${YName} studying in Class  ${Class}  in your esteemed institution. I am writing this letter to request you for a fee concession.\n reason of concussion is ${reason}.\n Duration of Concession is From ${datefrom} To   ${dateto}. \n\n Yours Sincerely \n  ${YName}`;
+
+            //!!! const Application for Admission =`To,\n Admissions Committee\n${College}\n ${address} \n  Subject :${subtitlemain}\n Dear Admissions Committee,\n I am writing to express my interest in applying for admission to ${Course} at  ${College} . Enclosed, please find my completed application form, transcripts, test scores, and recommendation letters. I am confident that my academic background and experiences align well with the programs objectives. Thank you for considering my application. I look forward to the opportunity to contribute positively to  ${College} . \n Yours Sincerely\n${YName} \n Contact No. ${contact}`;
+
+            //!!! const Appointment for Business Meeting = `${YName} \n ${YPosition} \n ${YAddress} \n ${YEmail} \n ${YPhone} \n\n ${RName} \n ${RPosition} \n ${RCompany} \n ${RAddress} \n\n   Subject : ${subtitlemain}.\n\n Dear ${RName}, \n I am writing to schedule a business meeting to  ${description}. The meeting is proposed to take place on  ${mdate}  at  ${time} at  ${location}.\n Your presence and input at this meeting are highly valued, as we aim to ${goals}. Please confirm your availability for the proposed date and time, or suggest an alternative if necessary.\n We believe that this meeting will be instrumental in ${benefits}\n Looking forward to our productive discussion. \n\n Yours Sincerely \n ${YName}`;
+
+            // const Congratulations on Your Promotion! = `${RName} \n ${RAddress} \n\n Dear ${RName}, \n Congratulations on your well-deserved promotion to ${RPosition}! Your hard work and dedication have made a significant impact on our team, and we are excited to see you excel in your new role.\n Your commitment to  ${projects} has been exemplary, and we have every confidence that you will continue to thrive and make valuable contributions to our organization.\n We look forward to supporting you in your new position and witnessing your continued success. \n \n Congratulations once again! \n Best regards, \n  ${YName}\n ${YPosition}`;
+
+            // const Birthday Letter = `Dear ${RName} \n  Happy Birthday! \n Wishing you a day filled with laughter, love, and all your favorite things. You bring so much joy to everyone around you, and today is all about celebrating the wonderful person you are. \n As you blow out the candles and make your wishes, know that I'm cheering you on every step of the way. Here's to another year of amazing adventures, cherished memories, and endless happiness.\n Enjoy every moment of your special day, and may the year ahead be filled with even more love, success, and happiness. \n Happy Birthday! \n Warmest wishes, \n ${YName}`;
+
+            // const Service Complaint = `${YName} \n  ${YAddress} \n\n  ${CName} \n  ${CAddress} \n Subject : ${subtitlemain} \n\n Dear Sir/Madam, \n I am writing to express my dissatisfaction with the service I received on ${mdate}. Despite my expectations, I encountered ${issue} I kindly request  ${action} Your prompt attention to this matter would be greatly appreciated. \n \n Sincerely, ${YName}`;
+
+            // const Noise Disturbance Complaint = `${YName} \n  ${YAddress} \n\n Subject : ${subtitlemain} \n\n Dear ${RName} \n I hope this message finds you well. Recently, I've noticed an increase in noise coming from your residence, especially during ${specific}. As your neighbor, I kindly request your cooperation in finding a solution to reduce the disturbance. Open communication and mutual respect for each other's living spaces are key to maintaining a harmonious neighborhood. I appreciate your understanding and willingness to address this matter.\n \n Sincerely, \n ${YName}`;
+
+            // const Tax related Inquiry =`${YName} \n ${YAddress} \n ${YEmail} \n ${YPhone} \n\n ${RName} \n ${RPosition} \n ${TOName} \n ${Organization} \n ${CAddress} \n  Subject : ${subtitlemain} \n Dear ${RName} \n I am writing to address a tax-related matter concerning ${inquiry}. I have attached all necessary documents and information to support my request/query. \n Your prompt attention to this matter would be greatly appreciated. Should you require any further information, please feel free to contact me at ${YPhone} or via email at ${YEmail}\n Thank you for your assistance. \n Sincerely, \n ${YName} `;
+
+            // const cancel election =`${YName}  \n ${YPosition} \n ${YAddress} \n ${YEmail} \n ${YPhone} \n\n ${RName} \n ${RPosition} \n ${GPOAddress}  \n  Subject : ${subtitlemain} \n\n Dear  ${RName} \n I hope this letter finds you well. I am writing to formally request the cancellation of my name as a candidate for the upcoming Gram Panchayat election scheduled to be held on  ${mdate}.\n Due to unforeseen personal circumstances  ${explanation}, I am unable to continue my candidacy for the aforementioned election. After careful consideration, I have decided to withdraw my nomination and kindly request the necessary steps be taken to cancel my name from the official list of candidates.\nI understand the importance of the election process and the responsibility that comes with running for public office. It is with regret that I find myself in a position where I must withdraw, but I believe it is in the best interest of the community and the electoral process.\n I assure you that this decision has not been made lightly, and I remain committed to supporting the democratic process in any capacity possible.\n Please acknowledge receipt of this request and confirm the cancellation of my candidacy at your earliest convenience. If there are any formalities or procedures I need to follow to complete this process, kindly provide guidance, and I will ensure prompt compliance. \n Thank you for your attention to this matter. I apologize for any inconvenience caused and appreciate your understanding.\n \n Yours Sincerely \n ${YName}`;
+
+            // const Prescription Renewal Request =`${YName} \n ${YAddress} \n ${YEmail} \n ${YPhone} \n\n ${RName} \n ${RAddress} \n Subject : ${subtitlemain}\n \n Dear  ${RName} \n I hope this letter finds you well. I am writing to request a renewal of my prescription for  ${MName}, which I have been taking under your care for ${time}. As my current prescription is nearing its expiration date, I am reaching out to ensure continuity of treatment.\n I understand the importance of regular check-ups and would be more than willing to schedule an appointment at your earliest convenience to discuss my treatment plan and any adjustments that may be necessary. Please let me know if you require any further information or if there are any specific protocols I should follow regarding this renewal request.\n I sincerely appreciate your attention to this matter and the care you have provided me with thus far. Your guidance and expertise have been invaluable in managing my health, and I trust your judgment in determining the best course of action regarding my medication. \nThank you for your time and consideration. I look forward to hearing from you soon. \n\n Warm regards,\n ${YName}`;
+
+            // const Medical Records Request =`${YName} \n ${YAddress} \n ${YEmail} \n ${YPhone} \n\n ${RName} \n ${RAddress} \n Subject : ${subtitlemain} \n\n Dear  ${RName} \n I hope this letter finds you well. I am writing to request a copy of my medical records maintained by your healthcare facility. As a patient under your care, I believe it is essential to have access to my complete medical history for personal reference and to facilitate continuity of care. \n Please find below the details necessary for processing my request:\n Patient Name: ${PName} \n Date of Birth: ${PBirth} \n Medical Record Number : ${MRNumber} \n Dates of Treatment:  ${STRecords} \n  I understand that there may be administrative fees associated with the duplication of medical records. Please inform me of any applicable charges and the preferred method of payment.\n Additionally, if there are any specific forms or procedures required to fulfill this request, please do not hesitate to provide instructions, and I will promptly comply with the necessary requirements. \n I appreciate your attention to this matter and your assistance in facilitating the release of my medical records. Should you require any further information or clarification, please feel free to contact me at your earliest convenience. \n Thank you for your prompt attention to this request.\n \n Yours Sincerely \n ${YName}`;
+
+            // const Resignation =`${YName} \n ${YAddress} \n ${YEmail} \n ${YPhone} \n\n ${RName} \n ${RPosition}\n ${CName} \n ${CAddress} Subject : ${subtitlemain} \n\n Dear  ${RName} \n I am writing to formally tender my resignation from my position as ${YPosition} at ${CName}, effective ${Last} \n Please accept this letter as formal notification of my decision to resign from ${CName}. I have valued my time here and have made this decision after careful consideration and reflection. \n I am committed to ensuring a smooth transition during the remainder of my tenure. I am willing to assist in training my replacement, documenting processes, and completing any outstanding tasks to the best of my ability. \n I would like to express my gratitude for the opportunities I have been given during my time at ${CName}. I have learned a great deal and have appreciated the support of my colleagues and supervisors.\n Thank you for your understanding. I wish ${CName} continued success in the future.\n\n Yours Sincerely \n ${YName}`;
+
+            // const Transfer Department Request =`${YName} \n ${YPosition} \n ${YCDepartment} \n ${CCAddress} \n\n ${RName} \n ${RPosition}\n ${CName} \n ${CAddress} \n Subject : ${subtitlemain} \n\n Dear ${RName} \n I am writing to formally request a transfer to  ${TDepartment}. I believe this move aligns better with my career goals and would allow me to contribute more effectively to ${CName}. I have discussed this with my supervisor, and I am eager to work closely with both teams for a smooth transition. Thank you for considering my request. \n\n Yours Sincerely \n ${YName}`;
+            // ATM = `To,\n Bank Manager\n${bank}\n ${address} \n  Subject : Request${subtitlemain}\nRequested Sir/Madam,\n I would like to inform you that I am ${YName} an account holder in your branch.My account holder name is ${YName} and my account number is ${acco} . I request you kindly issue me an ATM card as I do not have an ATM card. I need an ATM card for my work.\n Therefore, kindly issue me an ATM card as soon as possible.\n\n Thanking You,\n Yours Faithfully \n ${YName}`
+
+
+
+            // { text: "\n\n" },
+
+            // { text: "To," },
+            // { text: "Bank Manager" },
+            // { text: bank },
+            // { text: address },
+            // { text: "\n\n" },
+            // { text: ' Subject : ' + subtitlemain, alignment: 'center' },
+            // { text: "\n\n" },
+            // { text: "Requested Sir/Madam," },
+            // { text: 'I would like to inform you that I am ' + YName + ' an account holder in your branch.My account holder name is ' + YName + ' and my account number is ' + acco + ' . I request you kindly issue me an ATM card as I do not have an ATM card. I need an ATM card for my work.' },
+            // { text: "\n" },
+            // { text: "Therefore, kindly issue me an ATM card as soon as possible." },
+            // { text: "\n\n" },
+            // { text: "Thanking You," },
+            // { text: "Yours Faithfully" },
+            // { text:  YName }
+
+
+
+
+            var datevv = new Date();
+
+
+            console.log(datevv);
+            let dd = datevv.getDate();
+            let monthh = datevv.getMonth() + 1;
+            let yearsd = datevv.getFullYear();
+
+            //   console.log(mainprintms);
+
+            // let newdvar = mainprintms.replace(/\"/g, "");
+            // console.log(newdvar);
+
+            let mainprintms2 = mainprintms.replace(/"/g, '`');
+            let mainprintms3 = eval('`' + mainprintms2 + '`');
+
+            var docDefinition = {
+                content: [
+
+                    { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+                    { text: "\n\n" },
+                    { text: mainprintms3 }
+
+                    // ===>>>>>>> Application for ATM Card <<<<<<==== ✔️✔️
+
+
+
+                    // ,
+
+
+
+
+                    // { text: "\n\n" },
+
+                    // { text: "To," },
+                    // { text: "Bank Manager" },
+                    // { text: bank },
+                    // { text: address },
+                    // { text: "\n\n" },
+                    // { text: ' Subject : ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: "Requested Sir/Madam," },
+                    // { text: 'I would like to inform you that I am ' + YName + ' an account holder in your branch.My account holder name is ' + YName + ' and my account number is ' + acco + ' . I request you kindly issue me an ATM card as I do not have an ATM card. I need an ATM card for my work.' },
+                    // { text: "\n" },
+                    // { text: "Therefore, kindly issue me an ATM card as soon as possible." },
+                    // { text: "\n\n" },
+                    // { text: "Thanking You," },
+                    // { text: "Yours Faithfully" },
+                    // { text:  YName }
+
+                    // ======>>>>>>> Application for ATM Card   END HERE <<<<<<======
+
+
+                    // =======>>>>>>> letter for issuing bank statement. <<<<<<====== ✔️✔️
+
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+
+
+                    // { text: "\n\n" },
+
+                    // { text: "To," },
+                    // { text: "Bank Manager" },
+                    // { text: bank },
+                    // { text: address },
+                    // { text: "\n\n" },
+                    // { text: ' Subject : ' + ' Request ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: "Requested Sir/Madam," },
+                    // { text: 'I am writing to request a bank statement for my savings account with your esteemed bank. My account number is ' + acco + ' and the account is in the name of ' + YName + ' I would like to request the bank statement for the past, starting from ' + datefrom + ' to ' + dateto + '.' },
+
+                    // { text: "\n\n" },
+                    // { text: "Yours Sincerely" },
+                    // { text: YName }
+
+                    // >>>>>>> letter for issuing bank statement. END HERE <<<<<<
+
+
+
+
+                    // =======>>>>>>> Letter for issue of a new cheque book.<<<<<<======= ✔️✔️
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+
+
+                    // { text: "\n\n" },
+
+                    // { text: "To," },
+                    // { text: "Bank Manager" },
+                    // { text: bank },
+                    // { text: address },
+                    // { text: "\n\n" },
+                    // { text: ' Subject : ' + ' Request ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: "Requested Sir/Madam," },
+                    // { text: 'This is to bring to your attention that I am an account holder of your ' + bank + ' for a long time. My account number is ' + acco + ' Your employees are very helpful and I am completely satisfied with your services.' },
+
+                    // { text: "I am writing this application letter to inform you that my old cheque book has just finished and I would need another one on an urgent basis. It would be very kind of you if you do the needful and issue me a new cheque book as soon as possible." },
+                    // { text: "\n\n" },
+                    // { text: "Thanking You," },
+                    // { text: "Yours Sincerely" },
+                    // { text: YName }
+
+                    // ======>>>>>>> letter for issue of a new cheque book. END HERE <<<<<<======
+
+
+
+
+
+
+                    // >>>>>>> letter Request for Fee Concession. <<<<<<✔️✔️
+
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+
+
+                    // { text: "\n\n" },
+
+                    // { text: "To," },
+                    // { text: "The Principal" },
+                    // { text: College },
+                    // { text: address },
+                    // { text: "\n\n" },
+                    // { text: ' Subject : ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: "Dear Principal Sir/Madam," },
+                    // { text: 'I am ' + father + ', the father of ' + YName + ' studying in Class ' + Class + ' in your esteemed institution. I am writing this letter to request you for a fee concession.' },
+
+                    // { text: 'reason of concussion is' + reason + '.' },
+                    // { text: 'Duration of Concession is From ' + datefrom + ' To ' + dateto + '' },
+                    // { text: "\n\n" },
+                    // { text: "Yours Sincerely" },
+                    // { text: YName }
+
+                    // >>>>>>> letter Request for Fee Concession. END HERE <<<<<<
+
+
+
+
+                    // >>>>>>> Application for Admission <<<<<< ✔️✔️
+
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+
+
+                    // { text: "\n\n" },
+
+                    // { text: "To," },
+                    // { text: "Admissions Committee" },
+                    // { text: College },
+                    // { text: address },
+                    // { text: "\n\n" },
+                    // { text: ' Subject : ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: "Dear Admissions Committee," },
+                    // { text: 'I am writing to express my interest in applying for admission to ' + Course + ' at ' + College + '. Enclosed, please find my completed application form, transcripts, test scores, and recommendation letters. I am confident that my academic background and experiences align well with the programs objectives. Thank you for considering my application. I look forward to the opportunity to contribute positively to ' + College + '.' },
+
+                    // { text: "\n\n" },
+                    // { text: "Yours Sincerely" },
+                    // { text: YName },
+                    // { text: 'Contact No.' + contact + '' }
+
+
+
+                    // >>>>>>> Application for Admission END HERE <<<<<<
+
+
+
+
+                    // >>>>>>> Appointment for Business Meeting <<<<<< ✔️✔️
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+
+
+                    // { text: "\n\n" },
+                    // { text: YName },
+                    // { text: YPosition },
+                    // { text: YAddress },
+                    // { text: YEmail },
+                    // { text: YPhone },
+                    // { text: "\n\n" },
+
+                    // { text: RName },
+                    // { text: RPosition },
+                    // { text: RCompany },
+                    // { text: RAddress },
+
+
+                    // { text: "\n\n" },
+                    // { text: ' Subject : ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: 'Dear ' + RName },
+                    // { text: 'I am writing to schedule a business meeting to' + description + '. The meeting is proposed to take place on  ' + mdate + ' at ' + time + ' at ' + location + '. ' },
+                    // { text: 'Your presence and input at this meeting are highly valued, as we aim to ' + goals + '. Please confirm your availability for the proposed date and time, or suggest an alternative if necessary.' },
+                    // { text: 'We believe that this meeting will be instrumental in' + benefits },
+                    // { text: 'Looking forward to our productive discussion.' },
+
+                    // { text: "\n\n" },
+                    // { text: "Yours Sincerely" },
+                    // { text: YName }
+
+                    // >>>>>>> Appointment for Business Meeting END HERE<<<<<<
+
+                    //>>>>>>> Congratulations on Your Promotion!  <<<<<< ✔️✔️
+
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+                    // { text: "\n\n" },
+                    // { text: RName },
+                    // { text: RAddress },
+                    // { text: "\n\n" },
+                    // { text: 'Dear ' + RName },
+
+
+                    // { text: 'Congratulations on your well-deserved promotion to ' + RPosition + '! Your hard work and dedication have made a significant impact on our team, and we are excited to see you excel in your new role.' },
+
+                    // { text: 'Your commitment to ' + projects + ' has been exemplary, and we have every confidence that you will continue to thrive and make valuable contributions to our organization.' },
+
+                    // { text: 'We look forward to supporting you in your new position and witnessing your continued success.' },
+
+                    // { text: "\n\n" },
+                    // { text: "Congratulations once again!" },
+
+                    // { text: "Best regards," },
+                    // { text: YName },
+                    // { text: YPosition }
+
+                    //>>>>>>> Congratulations on Your Promotion! END HERE  <<<<<<
+
+
+                    // >>>>>>> Birthday Letter<<<<<<✔️✔️
+
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+                    // { text: "\n\n" },
+                    // { text: 'Dear ' + RName },
+                    // { text: "\n" },
+                    // { text: 'Happy Birthday!' },
+
+                    // { text: 'Wishing you a day filled with laughter, love, and all your favorite things. You bring so much joy to everyone around you, and today is all about celebrating the wonderful person you are.' },
+                    // { text: "\n" },
+                    // { text: "As you blow out the candles and make your wishes, know that I'm cheering you on every step of the way. Here's to another year of amazing adventures, cherished memories, and endless happiness." },
+                    // { text: "\n" },
+                    // { text: 'Enjoy every moment of your special day, and may the year ahead be filled with even more love, success, and happiness.' },
+
+                    // { text: "\n\n" },
+                    // { text: "Happy Birthday!" },
+
+                    // { text: "Warmest wishes," },
+                    // { text: YName }
+
+
+                    // >>>>>>> Birthday Letter END HERE<<<<<<
+
+
+
+
+
+
+                    //>>>>>>> Service Complaint  <<<<<<✔️✔️
+
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+                    // { text: "\n\n" },
+                    // { text: YName },
+                    // { text: YAddress },
+                    // { text: "\n\n" },
+                    // { text: CName },
+                    // { text: CAddress },
+                    // { text: ' Subject : ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: 'Dear Sir/Madam, ' },
+
+
+                    // { text: 'I am writing to express my dissatisfaction with the service I received on ' + mdate + '. Despite my expectations, I encountered ' + issue + ' I kindly request ' + action + ' Your prompt attention to this matter would be greatly appreciated.' },
+
+
+
+                    // { text: "\n\n" },
+
+
+                    // { text: "Sincerely," },
+                    // { text: YName }
+
+                    //>>>>>>> Service Complaint END HERE <<<<<<
+
+
+                    //>>>>>>> Noise Disturbance Complaint  <<<<<<✔️✔️
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+                    // { text: "\n\n" },
+                    // { text: YName },
+                    // { text: YAddress },
+                    // { text: "\n\n" },
+
+                    // { text: ' Subject : ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: 'Dear ' + RName },
+
+
+                    // { text: "I hope this message finds you well. Recently, I've noticed an increase in noise coming from your residence, especially during " + specific + ". As your neighbor, I kindly request your cooperation in finding a solution to reduce the disturbance. Open communication and mutual respect for each other's living spaces are key to maintaining a harmonious neighborhood. I appreciate your understanding and willingness to address this matter." },
+
+
+
+                    // { text: "\n\n" },
+
+
+                    // { text: "Sincerely," },
+                    // { text: YName }
+
+
+                    //>>>>>>> Noise Disturbance Complaint  END HERE <<<<<<
+
+                    //>>>>>>>  Tax-related Matter Inquiry <<<<<<✔️✔️
+
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+                    // { text: "\n\n" },
+                    // { text: YName },
+                    // { text: YAddress },
+                    // { text: YEmail },
+                    // { text: YPhone },
+                    // { text: "\n\n" },
+                    // { text: RName },
+                    // { text: RPosition },
+                    // { text: TOName },
+                    // { text: Organization },
+                    // { text: CAddress },
+
+                    // { text: ' Subject : ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: 'Dear ' + RName },
+
+
+                    // { text: 'I am writing to address a tax-related matter concerning ' + inquiry + '. I have attached all necessary documents and information to support my request/query. ' },
+
+                    // { text: 'Your prompt attention to this matter would be greatly appreciated. Should you require any further information, please feel free to contact me at ' + YPhone + ' or via email at ' + YEmail },
+                    // { text: "\n\n" },
+                    // { text: "Thank you for your assistance." },
+                    // { text: "\n" },
+
+                    // { text: "Sincerely," },
+                    // { text: YName }
+
+                    //>>>>>>>  Tax-related Matter Inquiry END HERE <<<<<<
+
+
+                    //>>>>>>>  To cancel the name for the upcoming Gram panchayat election <<<<<< ✔️✔️
+
+
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+                    // { text: "\n\n" },
+                    // { text: YName },
+                    // { text: YPosition },
+                    // { text: YAddress },
+                    // { text: YEmail },
+                    // { text: YPhone },
+                    // { text: "\n\n" },
+                    // { text: RName },
+                    // { text: RPosition },
+                    // { text: GPOAddress },
+
+                    // { text: ' Subject : ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: 'Dear ' + RName },
+
+
+                    // { text: 'I hope this letter finds you well. I am writing to formally request the cancellation of my name as a candidate for the upcoming Gram Panchayat election scheduled to be held on ' + mdate + '.' },
+
+                    // { text: 'Due to unforeseen personal circumstances ' + explanation + ' , I am unable to continue my candidacy for the aforementioned election. After careful consideration, I have decided to withdraw my nomination and kindly request the necessary steps be taken to cancel my name from the official list of candidates. ' },
+                    // { text: 'I understand the importance of the election process and the responsibility that comes with running for public office. It is with regret that I find myself in a position where I must withdraw, but I believe it is in the best interest of the community and the electoral process.' },
+                    // { text: "I assure you that this decision has not been made lightly, and I remain committed to supporting the democratic process in any capacity possible." },
+                    // { text: "Please acknowledge receipt of this request and confirm the cancellation of my candidacy at your earliest convenience. If there are any formalities or procedures I need to follow to complete this process, kindly provide guidance, and I will ensure prompt compliance." },
+                    // { text: "Thank you for your attention to this matter. I apologize for any inconvenience caused and appreciate your understanding." },
+                    // { text: "\n\n" },
+
+                    // { text: "Sincerely," },
+                    // { text: YName }
+
+
+
+
+                    //>>>>>>>  To cancel the name for the upcoming Gram panchayat election END HERE <<<<<<
+
+
+                    //>>>>>>> Prescription Renewal Request <<<<<<✔️✔️
+
+
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+                    // { text: "\n\n" },
+                    // { text: YName },
+                    // { text: YAddress },
+                    // { text: YEmail },
+                    // { text: YPhone },
+                    // { text: "\n\n" },
+                    // { text: RName },
+                    // { text: RAddress },
+
+
+                    // { text: ' Subject : ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: 'Dear ' + RName },
+
+
+                    // { text: 'I hope this letter finds you well. I am writing to request a renewal of my prescription for ' + MName + ' , which I have been taking under your care for ' + time + '. As my current prescription is nearing its expiration date, I am reaching out to ensure continuity of treatment.' },
+                    // { text: 'I understand the importance of regular check-ups and would be more than willing to schedule an appointment at your earliest convenience to discuss my treatment plan and any adjustments that may be necessary. Please let me know if you require any further information or if there are any specific protocols I should follow regarding this renewal request.' },
+                    // { text: 'I sincerely appreciate your attention to this matter and the care you have provided me with thus far. Your guidance and expertise have been invaluable in managing my health, and I trust your judgment in determining the best course of action regarding my medication.' },
+                    // { text: 'Thank you for your time and consideration. I look forward to hearing from you soon.' },
+
+
+                    // { text: "\n\n" },
+
+                    // { text: "Warm regards," },
+                    // { text: YName }
+
+                    //>>>>>>> Prescription Renewal Request  END HERE <<<<<<
+
+
+
+
+                    //>>>>>>> Medical Records Request <<<<<<✔️✔️
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+                    // { text: "\n\n" },
+                    // { text: YName },
+                    // { text: YAddress },
+                    // { text: YEmail },
+                    // { text: YPhone },
+                    // { text: "\n\n" },
+                    // { text: RName },
+                    // { text: RAddress },
+
+
+                    // { text: ' Subject : ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: 'Dear ' + RName },
+
+
+                    // { text: 'I hope this letter finds you well. I am writing to request a copy of my medical records maintained by your healthcare facility. As a patient under your care, I believe it is essential to have access to my complete medical history for personal reference and to facilitate continuity of care.' },
+                    // { text: "\n" },
+                    // { text: 'Please find below the details necessary for processing my request:' },
+                    // { text: "\n" },
+
+                    // { text: 'Patient Name: ' + PName },
+                    // { text: 'Date of Birth: ' + PBirth },
+                    // { text: 'Medical Record Number : ' + MRNumber },
+                    // { text: 'Dates of Treatment: ' + STRecords },
+                    // { text: "\n" },
+
+                    // { text: 'I understand that there may be administrative fees associated with the duplication of medical records. Please inform me of any applicable charges and the preferred method of payment.' },
+                    // { text: "\n" },
+                    // { text: 'Additionally, if there are any specific forms or procedures required to fulfill this request, please do not hesitate to provide instructions, and I will promptly comply with the necessary requirements.' },
+                    // { text: "\n" },
+                    // { text: 'I appreciate your attention to this matter and your assistance in facilitating the release of my medical records. Should you require any further information or clarification, please feel free to contact me at your earliest convenience.' },
+                    // { text: "\n" },
+                    // { text: 'Thank you for your prompt attention to this request.' },
+
+
+
+                    // { text: "\n\n" },
+
+                    // { text: "Sincerely," },
+                    // { text: YName }
+
+
+                    //>>>>>>> Medical Records Request  END HERE <<<<<<
+
+
+
+
+
+                    //>>>>>>> Resignation <<<<<< ✔️✔️
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+                    // { text: "\n\n" },
+                    // { text: YName },
+                    // { text: YAddress },
+                    // { text: YEmail },
+                    // { text: YPhone },
+                    // { text: "\n\n" },
+                    // { text: RName },
+                    // { text: RPosition },
+                    // { text: CName },
+                    // { text: CAddress },
+                    // { text: ' Subject : ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: 'Dear ' + RName },
+
+
+                    // { text: 'I am writing to formally tender my resignation from my position as ' + YPosition + ' at ' + CName + ', effective ' + Last },
+
+                    // { text: 'Please accept this letter as formal notification of my decision to resign from ' + CName + '. I have valued my time here and have made this decision after careful consideration and reflection.' },
+
+                    // { text: 'I am committed to ensuring a smooth transition during the remainder of my tenure. I am willing to assist in training my replacement, documenting processes, and completing any outstanding tasks to the best of my ability.' },
+
+                    // { text: 'I would like to express my gratitude for the opportunities I have been given during my time at ' + CName + '. I have learned a great deal and have appreciated the support of my colleagues and supervisors.' },
+
+                    // { text: 'Thank you for your understanding. I wish ' + CName + 'continued success in the future.' },
+                    // { text: "\n\n" },
+
+
+                    // { text: "Sincerely," },
+                    // { text: YName }
+
+
+                    //>>>>>>> Resignation END HERE <<<<<<
+
+
+                    //>>>>>>> Transfer Request Letter <<<<<<✔️✔️
+
+
+
+                    // { text: "Date : " + dd + '/' + monthh + '/' + yearsd, alignment: 'right' },
+                    // { text: "\n\n" },
+                    // { text: YName },
+                    // { text: YPosition },
+                    // { text: YCDepartment },
+                    // { text: CCAddress },
+                    // { text: "\n\n" },
+                    // { text: RName },
+                    // { text: RPosition },
+                    // { text: CName },
+                    // { text: CAddress },
+                    // { text: ' Subject : ' + subtitlemain, alignment: 'center' },
+                    // { text: "\n\n" },
+                    // { text: 'Dear ' + RName },
+
+
+                    // { text: 'I am writing to formally request a transfer to ' + TDepartment + '. I believe this move aligns better with my career goals and would allow me to contribute more effectively to ' + CName + '. I have discussed this with my supervisor, and I am eager to work closely with both teams for a smooth transition. Thank you for considering my request. ' },
+
+
+                    // { text: "\n\n" },
+
+
+                    // { text: "Sincerely," },
+                    // { text: YName }
+
+
+                    //>>>>>>> Transfer Request Letter END HERE <<<<<<
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                ],
+                defaultStyle: {
+                    fontSize: "11"
+                }
+            };
+            pdfMake.createPdf(docDefinition).open();
+        }
+    </script>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="index.html">
+            <img src="logo1.png" width="100px" height="30px">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item ">
+                    <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="about.html">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="contact.html">Contact Us</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="loginindex.html"  >Logout <i class="bi bi-box-arrow-right" style="color: crimson;"></i></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row" style="text-align: center; margin-top: 3%;">
+            <div class="col-md-12">
+                <h2 id="newdtitd"> </h2>
+
+
+            </div>
+        </div>
+
+
+
+        <!-- >>>>>>>>>>>> All dialog  Start from Here <<<<<<<<<<<<<-->
+
+      
+
+
+
+
+
+
+
+
+
+
+        <div class="modal fade" id="bk_chk_atm" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="name">Name:</label>
+                                    <input type="text" class="form-control" id="var1" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-6">
+
+
+                                    <label for="name">Account Number:</label>
+                                    <input type="text" class="form-control" id="var2" name="acco"
+                                        placeholder="Enter your Account Number" required>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+
+                                    <label for="address">Address:</label><br>
+                                    <textarea class="form-control" id="var3" name="address" rows="4"
+                                        placeholder="Enter Bank address"></textarea>
+
+                                </div>
+                                <div class="col-6">
+
+                                    <label for="college">Bank Name:</label>
+                                    <textarea type="text" class="form-control" id="var4" name="bank" rows="4"
+                                        placeholder="Enter your bank name"></textarea>
+
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+                        </form>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="modal fade" id="bk_stmt" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="name">Name:</label>
+                                    <input type="text" class="form-control" id="var5" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-6">
+
+
+                                    <label for="name">Account Number:</label>
+                                    <input type="text" class="form-control" id="var6" name="acco"
+                                        placeholder="Enter your Account Number" required>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+
+                                    <label for="address">Address:</label><br>
+                                    <textarea class="form-control" id="var7" name="address" rows="4"
+                                        placeholder="Enter your address"></textarea>
+
+                                </div>
+                                <div class="col-6">
+
+                                    <label for="college">Bank Name:</label>
+                                    <textarea type="text" class="form-control" id="var8" name="bank" rows="4"
+                                        placeholder="Enter your bank name"></textarea>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+
+                                    <label for="date">From:</label><br>
+                                    <input type="date" class="form-control" id="var9" name="datefrom">
+
+                                </div>
+                                <div class="col-6">
+
+                                    <label for="date">To:</label><br>
+                                    <input type="date" class="form-control" id="var10" name="dateto">
+
+
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+                        </form>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="modal fade" id="Concession" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="name">Name:</label>
+                                    <input type="text" class="form-control" id="var11" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-6">
+
+
+                                    <label for="name">Father Name :</label>
+                                    <input type="text" class="form-control" id="var12" name="father"
+                                        placeholder="Enter your Father Name" required>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+
+                                    <label for="address"> College / School Address:</label><br>
+                                    <textarea class="form-control" id="var13" name="address" rows="4"
+                                        placeholder="Enter your College / School address"></textarea>
+
+                                </div>
+                                <div class="col-6">
+
+                                    <label for="college">College / School Name:</label>
+                                    <textarea type="text" class="form-control" id="var14" name="College" rows="4"
+                                        placeholder="Enter Your College / School name"></textarea>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+
+                                    <label for="date">Class:</label><br>
+                                    <input type="text" class="form-control" id="var15" name="Class">
+
+                                </div>
+                                <div class="col-6">
+
+                                    <label for="date">Reason for Concession :</label><br>
+                                    <input type="text" class="form-control" id="var16" name="reason">
+
+
+                                </div>
+                            </div>
+                            <h3 style="text-align: center;">Duration of Concession </h3>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="date">From:</label><br>
+                                    <input type="date" class="form-control" id="var17" name="datefrom">
+
+                                </div>
+                                <div class="col-6">
+
+                                    <label for="date">To:</label><br>
+                                    <input type="date" class="form-control" id="var18" name="dateto">
+
+
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+                        </form>
+
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="Admission" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="name">Name:</label>
+                                    <input type="text" class="form-control" id="var19" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-4">
+
+
+                                    <label for="name">Course Name :</label>
+                                    <input type="text" class="form-control" id="var20" name="Course"
+                                        placeholder="Enter your Course Name" required>
+
+                                </div>
+                                <div class="col-sm-4">
+
+
+                                    <label for="name"> Contact No.:</label>
+                                    <input type="text" class="form-control" id="var21" name="contact"
+                                        placeholder="Enter your Contact No." required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+
+                                    <label for="address"> College / School Address:</label><br>
+                                    <textarea class="form-control" id="var22" name="address" rows="4"
+                                        placeholder="Enter your College / School address"></textarea>
+
+                                </div>
+                                <div class="col-6">
+
+                                    <label for="college">College / School Name:</label>
+                                    <textarea type="text" class="form-control" id="var23" name="College" rows="4"
+                                        placeholder="Enter Your College / School name"></textarea>
+
+                                </div>
+
+                            </div>
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+                        </form>
+
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="Meeting" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="name"> Your Name:</label>
+                                    <input type="text" class="form-control" id="var24" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-3">
+
+
+                                    <label for="name">Your Position :</label>
+                                    <input type="text" class="form-control" id="var25" name="YPosition"
+                                        placeholder="Enter your Position " required>
+
+                                </div>
+
+                                <div class="col-sm-3">
+
+                                    <label for="address"> Your Email:</label><br>
+                                    <input type="text" class="form-control" id="var26" name="YEmail"
+                                        placeholder="Enter Your Email" required>
+
+                                </div>
+                                <div class="col-sm-3">
+
+                                    <label for="address"> Your Phone No:</label><br>
+                                    <input type="text" class="form-control" id="var27" name="YPhone"
+                                        placeholder="Enter Your Phone No" required>
+
+                                </div>
+                            </div>
+                            <div class="row">
+
+
+                                <div class="col-sm-6">
+
+
+                                    <label for="name"> Your Address:</label>
+                                    <textarea type="text" class="form-control" id="var28" name="YAddress" rows="3"
+                                        placeholder="Enter your Address" required></textarea>
+                                </div>
+
+                                <div class="col-sm-6">
+
+
+                                    <label for="name"> Recipient's Address:</label>
+                                    <textarea type="text" class="form-control" id="var29" name="RAddress" rows="3"
+                                        placeholder="Enter your Address" required></textarea>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="name"> Recipient's Name:</label>
+                                    <input type="text" class="form-control" id="var30" name="RName"
+                                        placeholder="Enter Recipient's Name" required>
+                                </div>
+                                <div class="col-sm-4">
+
+
+                                    <label for="name">Recipient's Position :</label>
+                                    <input type="text" class="form-control" id="var31" name="RPosition"
+                                        placeholder="Enter Recipient's Position " required>
+
+                                </div>
+
+                                <div class="col-sm-4">
+
+                                    <label for="address"> Recipient's Company:</label><br>
+                                    <input type="text" class="form-control" id="var32" name="RCompany"
+                                        placeholder="Enter Recipient's Company" required>
+
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="name"> Description :</label>
+                                    <textarea type="text" class="form-control" id="var33" name="description" rows="3"
+                                        placeholder="Enter Description About Meeting" required></textarea>
+                                </div>
+                                <div class="col-sm-4">
+
+
+                                    <label for="name"> Your objective or goals:</label>
+                                    <textarea type="text" class="form-control" id="var34" name="goals" rows="3"
+                                        placeholder="Enter Your objective or goals" required></textarea>
+
+                                </div>
+
+                                <div class="col-sm-4">
+
+                                    <label for="name">Enter outcomes or benefits :</label>
+                                    <textarea type="text" class="form-control" id="var35" name="benefits" rows="3"
+                                        placeholder="Enter outcomes or benefits" required></textarea>
+
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="name"> Date of Meeting:</label>
+                                    <input type="date" class="form-control" id="var36" name="mdate" required>
+                                </div>
+
+
+                                <div class="col-sm-4">
+
+                                    <label for="address"> Time Of Meeting:</label><br>
+                                    <input type="time" class="form-control" id="var37" name="time"
+                                        placeholder="Enter Time of Meeting" required>
+
+                                </div>
+                                <div class="col-sm-4">
+
+                                    <label for="address"> Location :</label><br>
+                                    <input type="text" class="form-control" id="var38" name="location"
+                                        placeholder="Enter Location of meeting" required>
+
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+                        </form>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="modal fade" id="Promotion" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="name"> Your Name:</label>
+                                    <input type="text" class="form-control" id="var39" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="name"> Your Position:</label>
+                                    <input type="text" class="form-control" id="var40" name="YPosition"
+                                        placeholder="Enter your Position" required>
+                                </div>
+
+                            </div>
+                            <div class="row">
+
+                                <div class="col-sm-6">
+
+                                    <label for="name">Recipient's Name:</label>
+                                    <input type="text" class="form-control" id="var41" name="RName"
+                                        placeholder="Enter Recipient's Name " required>
+
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="name"> Recipient's Position:</label>
+                                    <input type="text" class="form-control" id="var42" name="RPosition"
+                                        placeholder="Enter Recipient's New Position" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+
+                                    <label for="name">Recipient's Address :</label>
+                                    <textarea type="text" class="form-control" id="var43" name="RAddress" rows="3"
+                                        placeholder="Enter Recipient's Address" required></textarea>
+
+                                </div>
+                                <div class="col-sm-6">
+
+                                    <label for="name">Specific accomplishments or projects :</label>
+                                    <textarea type="text" class="form-control" id="var44" name="projects" rows="3"
+                                        placeholder="Enter specific accomplishments or projects" required></textarea>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="Birth" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="name"> Your Name:</label>
+                                    <input type="text" class="form-control" id="var45" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-6">
+
+
+                                    <label for="name">Recipient's Name:</label>
+                                    <input type="text" class="form-control" id="var46" name="RName"
+                                        placeholder="Enter Recipient's Name " required>
+
+                                </div>
+
+
+                            </div>
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+
+                        </form>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="Service" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form id="Service">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="name"> Your Name:</label>
+                                    <input type="text" class="form-control" id="var47" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="name"> Your Address :</label>
+                                    <input type="text" class="form-control" id="var48" name="YAddress"
+                                        placeholder="Enter your Address" required>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <label for="name"> Enter service received date:</label>
+                                    <input type="date" class="form-control" id="var49" name="mdate" required>
+                                </div>
+
+                            </div>
+                            <div class="row">
+
+                                <div class="col-sm-6">
+
+                                    <label for="name">Company Name:</label>
+                                    <input type="text" class="form-control" id="var50" name="CName"
+                                        placeholder="Enter Company Name " required>
+
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="name"> Company Address:</label>
+                                    <input type="text" class="form-control" id="var51" name="CAddress"
+                                        placeholder="Enter specific time of Disturbance " required>
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="name"> Briefly describe the issue:</label>
+                                    <input type="text" class="form-control" id="var52" name="issue"
+                                        placeholder=" e.g., poor customer service, product defects, etc. " required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="name"> Mention specific action you'd like:</label>
+                                    <input type="text" class="form-control" id="var53" name="action"
+                                        placeholder=" e.g., a refund, replacement, etc. " required>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+
+                        </form>
+
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="Noise" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="name"> Your Name:</label>
+                                    <input type="text" class="form-control" id="var54" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="name"> Your Address :</label>
+                                    <input type="text" class="form-control" id="var55" name="YAddress"
+                                        placeholder="Enter your Address" required>
+                                </div>
+
+                            </div>
+                            <div class="row">
+
+                                <div class="col-sm-6">
+
+                                    <label for="name">Neighbor's Name:</label>
+                                    <input type="text" class="form-control" id="var56" name="RName"
+                                        placeholder="Enter Neighbor's Name " required>
+
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="name"> Mention specific times:</label>
+                                    <input type="text" class="form-control" id="var57" name="specific"
+                                        placeholder="Enter specific time of Disturbance " required>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+
+                        </form>
+
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="Transfer" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="name">Name:</label>
+                                    <input type="text" class="form-control" id="var58" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="name"> Position :</label>
+                                    <input type="text" class="form-control" id="var59" name="YPosition"
+                                        placeholder="Enter your Position" required>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <label for="name">Current Department/Team:</label>
+                                    <input type="text" class="form-control" id="var60" name="YCDepartment"
+                                        placeholder="Enter your Current Department/Team" required>
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="name">Current Company Address:</label>
+                                    <input type="text" class="form-control" id="var61" name="CCAddress"
+                                        placeholder="Enter your Current Company Address" required>
+                                </div>
+                                <div class="col-sm-4">
+
+                                    <label for="name">Target Department/Team:</label>
+                                    <input type="text" class="form-control" id="var62" name="TDepartment"
+                                        placeholder="Enter Target Department/Team" required>
+
+                                </div>
+                                <div class="col-sm-4">
+
+                                    <label for="name">Recipient's Name:</label>
+                                    <input type="text" class="form-control" id="var63" name="RName"
+                                        placeholder="Enter Recipient's Name " required>
+
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="col-sm-4">
+                                    <label for="name"> Recipient's Position:</label>
+                                    <input type="text" class="form-control" id="var64" name="RPosition"
+                                        placeholder="Enter Recipient's Position " required>
+                                </div>
+
+                                <div class="col-sm-4">
+
+                                    <label for="name">Recipient's Company Name:</label>
+                                    <input type="text" class="form-control" id="var65" name="CName"
+                                        placeholder="Enter Recipient's Company Name " required>
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="name"> Recipient's Company Address:</label>
+                                    <input type="text" class="form-control" id="var66" name="CAddress"
+                                        placeholder="Enter Recipient's Company Address " required>
+                                </div>
+
+
+                            </div>
+
+
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+
+                        </form>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="Resignation" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="name"> Your Name:</label>
+                                    <input type="text" class="form-control" id="var67" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="name"> Your Address :</label>
+                                    <input type="text" class="form-control" id="var68" name="YAddress"
+                                        placeholder="Enter your Address" required>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <label for="name"> Your Email:</label>
+                                    <input type="text" class="form-control" id="var69" name="YEmail"
+                                        placeholder="Enter your Email" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="name"> Your Phone Number:</label>
+                                    <input type="text" class="form-control" id="var70" name="YPhone"
+                                        placeholder="Enter your Phone Number" required>
+                                </div>
+
+                            </div>
+                            <div class="row">
+
+                                <div class="col-sm-6">
+                                    <label for="name"> Your Position:</label>
+                                    <input type="text" class="form-control" id="var71" name="YPosition"
+                                        placeholder=" Enter Your Position " required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="name">Last Working Day :</label>
+                                    <input type="text" class="form-control" id="var72" name="Last"
+                                        placeholder=" typically two weeks from the date of the letter " required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+
+                                    <label for="name">Recipient's Name:</label>
+                                    <input type="text" class="form-control" id="var73" name="RName"
+                                        placeholder="Enter Recipient's Name " required>
+
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="name"> Recipient's Position:</label>
+                                    <input type="text" class="form-control" id="var74" name="RPosition"
+                                        placeholder="Enter Recipient's Position " required>
+                                </div>
+
+                                <div class="col-sm-3">
+
+                                    <label for="name">Company Name:</label>
+                                    <input type="text" class="form-control" id="var75" name="CName"
+                                        placeholder="Enter Company Name " required>
+
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="name"> Company Address:</label>
+                                    <input type="text" class="form-control" id="var76" name="CAddress"
+                                        placeholder="Enter Company Address " required>
+                                </div>
+
+
+                            </div>
+
+
+
+
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+
+                        </form>
+
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="Tax" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="name">Name:</label>
+                                    <input type="text" class="form-control" id="var77" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="name"> Address :</label>
+                                    <input type="text" class="form-control" id="var78" name="YAddress"
+                                        placeholder="Enter your Address" required>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <label for="name"> Email:</label>
+                                    <input type="text" class="form-control" id="var79" name="YEmail"
+                                        placeholder="Enter your Email" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="name"> Phone Number :</label>
+                                    <input type="text" class="form-control" id="var80" name="YPhone"
+                                        placeholder="Enter your Phone Number" required>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+
+                                    <label for="name">Recipient's Name:</label>
+                                    <input type="text" class="form-control" id="var81" name="RName"
+                                        placeholder="Enter Recipient's Name " required>
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="name"> Recipient's Position:</label>
+                                    <input type="text" class="form-control" id="var82" name="RPosition"
+                                        placeholder="Enter Recipient's Position " required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="name">Tax Office Name:</label>
+                                    <input type="text" class="form-control" id="var83" name="TOName"
+                                        placeholder="Enter Tax Office or Department Name" required>
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+
+                                    <label for="name">Organization Name:</label>
+                                    <input type="text" class="form-control" id="var84" name="Organization"
+                                        placeholder="Enter Company or Organization Name" required>
+
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <label for="name"> Company Address:</label>
+                                    <input type="text" class="form-control" id="var85" name="CAddress"
+                                        placeholder="Enter Recipient's Company Address " required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="name">Describe issue or inquiry:</label>
+                                    <input type="text" class="form-control" id="var86" name="inquiry"
+                                        placeholder="Enter briefly describe the issue or inquiry " required>
+                                </div>
+
+
+                            </div>
+
+
+
+
+
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+
+                        </form>
+
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="election" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="name">Name:</label>
+                                    <input type="text" class="form-control" id="var87" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="name"> Position :</label>
+                                    <input type="text" class="form-control" id="var88" name="YPosition"
+                                        placeholder="Enter your Position" required>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <label for="name"> Address :</label>
+                                    <input type="text" class="form-control" id="var89" name="YAddress"
+                                        placeholder="Enter your Address" required>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <label for="name"> Email:</label>
+                                    <input type="text" class="form-control" id="var90" name="YEmail"
+                                        placeholder="Enter your Email" required>
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="name"> Phone Number :</label>
+                                    <input type="text" class="form-control" id="var91" name="YPhone"
+                                        placeholder="Enter your Phone Number" required>
+                                </div>
+                                <div class="col-sm-4">
+
+                                    <label for="name">Recipient's Name:</label>
+                                    <input type="text" class="form-control" id="var92" name="RName"
+                                        placeholder="Enter Recipient's Name " required>
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="name"> Recipient's Position:</label>
+                                    <input type="text" class="form-control" id="var93" name="RPosition"
+                                        placeholder="Enter Recipient's Position " required>
+                                </div>
+
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <label for="name">Gram Panchayat Office Address:</label>
+                                    <input type="text" class="form-control" id="var94" name="GPOAddress"
+                                        placeholder="Enter Gram Panchayat Office Address" required>
+                                </div>
+                                <div class="col-sm-3">
+
+                                    <label for="name">Election Date :</label>
+                                    <input type="date" class="form-control" id="var95" name="mdate"
+                                        placeholder="Enter Company or Organization Name" required>
+
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <label for="name"> explanation if comfortable:</label>
+                                    <input type="text" class="form-control" id="var96" name="explanation "
+                                        placeholder="Enter Provide a brief explanation if comfortable " required>
+                                </div>
+
+
+
+                            </div>
+
+
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+
+                        </form>
+
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="Records" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="name">Name:</label>
+                                    <input type="text" class="form-control" id="var97" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+
+
+                                <div class="col-sm-3">
+                                    <label for="name"> Address :</label>
+                                    <input type="text" class="form-control" id="var98" name="YAddress"
+                                        placeholder="Enter your Address" required>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <label for="name"> Email:</label>
+                                    <input type="text" class="form-control" id="var99" name="YEmail"
+                                        placeholder="Enter your Email" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="name"> Phone Number :</label>
+                                    <input type="text" class="form-control" id="var100" name="YPhone"
+                                        placeholder="Enter your Phone Number" required>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="col-sm-6">
+
+                                    <label for="name">Healthcare Provider's Name:</label>
+                                    <input type="text" class="form-control" id="var101" name="RName"
+                                        placeholder="Enter Healthcare Provider's Name " required>
+
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="name"> Healthcare Provider's Address:</label>
+                                    <input type="text" class="form-control" id="var102" name="RAddress"
+                                        placeholder="Enter Healthcare Provider's Address " required>
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="name"> Patient Name:</label>
+                                    <input type="text" class="form-control" id="var103" name="PName"
+                                        placeholder="Enter Patient Name " required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="name"> Patient Date of Birth:</label>
+                                    <input type="date" class="form-control" id="var104" name="PBirth" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="name">Medical Record Number:</label>
+                                    <input type="text" class="form-control" id="var105" name="MRNumber"
+                                        placeholder="Enter Medical Record Number (if available) ">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="name"> Dates of Treatment:</label>
+                                    <input type="text" class="form-control" id="var106" name="STRecords"
+                                        placeholder="Enter Time dates for which records are requested " required>
+                                </div>
+                            </div>
+
+
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+
+                        </form>
+
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="Renewal" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enter Inputs</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="name">Name:</label>
+                                    <input type="text" class="form-control" id="var107" name="YName"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="name"> Address :</label>
+                                    <input type="text" class="form-control" id="var108" name="YAddress"
+                                        placeholder="Enter your Address" required>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <label for="name">Email:</label>
+                                    <input type="text" class="form-control" id="var109" name="YEmail"
+                                        placeholder="Enter your Current Email" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="name">Phone:</label>
+                                    <input type="text" class="form-control" id="var110" name="YPhone"
+                                        placeholder="Enter your Phone Number" required>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label for="name">Time:</label>
+                                    <input type="text" class="form-control" id="var111" name="time"
+                                        placeholder="Enter Time of taking Medication  eg. 10 days  " required>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="col-sm-4">
+
+                                    <label for="name">Recipient's Name:</label>
+                                    <input type="text" class="form-control" id="var112" name="RName"
+                                        placeholder="Enter Recipient's Name " required>
+
+                                </div>
+                                <div class="col-sm-4">
+
+                                    <label for="name">Recipient's Address:</label>
+                                    <input type="text" class="form-control" id="var113" name="RAddress"
+                                        placeholder="Enter Recipient's Address" required>
+
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <label for="name">Medication Name:</label>
+                                    <input type="text" class="form-control" id="var114" name="MName"
+                                        placeholder="Enter Recipient's Position " required>
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-12">
+                                <button onclick="downloadPdf()" type="submit"
+                                    class="btn btn-primary btn-block">Generate</button>
+                            </div>
+
+                        </form>
+
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- >>>>>>>>>>>> All dialog  End  Here <<<<<<<<<<<<<-->
+
+        <table class="table" style="text-align: center;">
+            <thead>
+                <tr style=" background-color: rgba(48, 85, 235, 0.853);  color: white;">
+
+                    <th>SR. NO.</th>
+                    <th>Types Of Letters</th>
+                    <th>Generate Letter </th>
+
+                </tr>
+            </thead>
+            <tbody class="table" id="mylb">
+
+
+
+
+
+
+            </tbody>
+        </table>
+
+    </div>
+
+    <footer id="footer" class="footer">
+        <div class="copyright">
+            &copy; Copyright <strong><span>Auto Letter</span></strong>. All Rights Reserved
+        </div>
+        <div class="credits">
+            Designed by <a href="#">Admin</a><br>
+            <a href="#" class="twitter"><i class="bi bi-twitter" style="font-size: 20px;"></i></a>&nbsp;
+            <a href="#" class="facebook"><i class="bi bi-facebook" style="font-size: 20px;"></i></a>&nbsp;
+            <a href="#" class="instagram"><i class="bi bi-instagram" style="font-size: 20px;"></i></a>&nbsp;
+            <a href="#" class="linkedin"><i class="bi bi-linkedin" style="font-size: 20px;"></i></a>
+        </div>
+    </footer>
+</body>
+
+</html>
