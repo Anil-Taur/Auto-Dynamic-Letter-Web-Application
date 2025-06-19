@@ -85,13 +85,13 @@ http://localhost/auto-dynamic-letter
 > ## 📷 Screenshots
 
 ### 🏠 Home Page
-![Home Page](images/homepage.png)
+![Home Page](homepage.png)
 
 ### ✍️ Form Input Page
-![Form Page](images/form-page.png)
+![Form Page](form-page.png)
 
 ### 📄 Letter Preview Page
-![Subject Page](images/subject-page.png)
+![Subject Page](subject-page.png)
 
 
 ---
