@@ -123,7 +123,7 @@ auto-dynamic-letter/
 ## 📬 Contact
 
 For feedback, suggestions, or support:
-📧 Email: [yourname@example.com](mailto:aniltaur9921@gmail.com)
-🔗 GitHub: [yourusername]([https://github.com/Anil-Taur])
+📧 Email: [aniltaur9921@gmail.com](mailto:aniltaur9921@gmail.com)
+🔗 GitHub: [Anil-Taur]([https://github.com/Anil-Taur])
 
 ```
