@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <title>Auto Letter - Home</title>
+    <link href="logo2.png" rel="icon">
+    <style>
+        .row {
+            margin-top: 10px;
+
+        }
+
+        .col-md-3 {
+            text-align: center;
+            padding: 20px;
+
+        }
+
+        .footer {
+            padding: 20px 0;
+            font-size: 14px;
+            transition: all 0.3s;
+            border-top: 1px solid #cddfff;
+            margin-top: 7%;
+
+        }
+
+        .footer .copyright {
+            text-align: center;
+            color: #012970;
+        }
+
+        .footer .credits {
+            padding-top: 5px;
+            text-align: center;
+            font-size: 13px;
+            color: #012970;
+        }
+    </style>
+    <script>
+
+
+        window.onload = myonload();
+        function myonload() {
+
+
+            console.log('chekc');
+
+            $.ajax({
+                method: 'GET',
+                url: 'http://localhost:80/Webservice/get_letter_title.php',
+
+
+
+            }).then(function (data) {
+                console.log(data);
+
+                let datscheck = jQuery.parseJSON(data);
+                console.log(datscheck);
+
+                var htmldemo = "";
+                for (let i = 0; i < datscheck.length; i++) {
+                    let title_id = datscheck[i].title_id;
+                    let lettertitle = datscheck[i].title_name;
+
+                    let icon_name = datscheck[i].icon_name;
+
+                    htmldemo += "<div class='col-md-3'><i class='bi-" + icon_name + "' style='font-size:30px;'></i><h2><b>" + lettertitle + "</b></h2><p>All Types of " + lettertitle + "</p><button type='button' class='btn btn-success' onclick='opensub(\"" + title_id + "\",\"" + lettertitle + "\")'> Click Here </button></div>";
+                }
+
+
+                document.getElementById('mylb').innerHTML = htmldemo;
+
+
+
+            })
+
+
+
+
+
+
+        }
+
+        function opensub(titleid, lettertile) {
+
+            localStorage.setItem('mainletterid', titleid);
+            localStorage.setItem('mainlettertitle', lettertile);
+
+            window.location.href = 'subtitle.html';
+
+
+        }
+    </script>
+</head>
+
+<body>
+
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="index.html">
+            <img src="logo1.png" width="100px" height="30px">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="about.html">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="contact.html">Contact Us</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="loginindex.html"  >Logout <i class="bi bi-box-arrow-right" style="color: crimson;"></i></a>
+                </li>
+            </ul>
+            <!-- <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form> -->
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+
+        <div class="row" id="mylb">
+
+
+
+
+
+        </div>
+    </div>
+    <footer id="footer" class="footer">
+        <div class="copyright">
+            &copy; Copyright <strong><span>Auto Letter</span></strong>. All Rights Reserved
+        </div>
+        <div class="credits">
+            Designed by <a href="#">Admin</a><br>
+            <a href="#" class="twitter"><i class="bi bi-twitter" style="font-size: 20px;"></i></a>&nbsp;
+            <a href="#" class="facebook"><i class="bi bi-facebook" style="font-size: 20px;"></i></a>&nbsp;
+            <a href="#" class="instagram"><i class="bi bi-instagram" style="font-size: 20px;"></i></a>&nbsp;
+            <a href="#" class="linkedin"><i class="bi bi-linkedin" style="font-size: 20px;"></i></a>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
