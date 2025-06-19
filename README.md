@@ -82,8 +82,6 @@ http://localhost/auto-dynamic-letter
 
 ## 📷 Screenshots
 
-> ## 📷 Screenshots
-
 ### 🏠 Home Page
 ![Home Page](homepage.png)
 
