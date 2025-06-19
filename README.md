@@ -41,3 +41,89 @@ Built using a combination of:
 
 ```bash
 git clone https://github.com/yourusername/auto-dynamic-letter.git
+````
+
+Or download the ZIP and extract the folder.
+
+### Step 2: Move to WAMP Directory
+
+Copy the extracted project folder into your WAMP `www` directory:
+
+```
+C:\wamp64\www\
+```
+
+### Step 3: Setup MySQL Database
+
+1. Start **WAMP** and ensure both Apache and MySQL are running (green icon).
+2. Go to: `http://localhost/phpmyadmin`
+3. Create a new database named: `letter_app`
+4. Import the provided SQL file (e.g., `letter_app.sql`) from the project folder.
+
+### Step 4: Run the Web App
+
+Visit your local server URL:
+
+```
+http://localhost/auto-dynamic-letter
+```
+
+---
+
+## 📄 Usage Instructions
+
+1. Open the website in your browser.
+2. Select the subject of the letter from the dropdown.
+3. Fill in the required personal or official information.
+4. Click **Generate** to view the formatted letter.
+5. Print or copy the letter as needed.
+
+---
+
+## 📷 Screenshots
+
+> ## 📷 Screenshots
+
+### 🏠 Home Page
+![Home Page](images/homepage.png)
+
+### ✍️ Form Input Page
+![Form Page](images/form-page.png)
+
+### 📄 Letter Preview Page
+![Subject Page](images/subject-page.png)
+
+
+---
+
+## 📂 Folder Structure
+
+```
+auto-dynamic-letter/
+├── index.php
+├── letter.php
+├── /assets
+│   ├── style.css
+│   └── script.js
+├── /templates
+│   └── letter_templates.sql
+├── /db
+│   └── config.php
+└── README.md
+```
+## 🙏 Acknowledgements
+
+* Bootstrap (UI framework)
+* WAMP Stack (Local server)
+* phpMyAdmin (Database tool)
+* Open-source contributors and testers
+
+---
+
+## 📬 Contact
+
+For feedback, suggestions, or support:
+📧 Email: [yourname@example.com](mailto:aniltaur9921@gmail.com)
+🔗 GitHub: [yourusername]([https://github.com/Anil-Taur])
+
+```
